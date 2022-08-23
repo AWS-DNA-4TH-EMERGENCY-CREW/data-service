@@ -16,6 +16,7 @@ s3 = boto3.client('s3')
 
 output_bucket = os.environ['OUTPUT_BUCKET']
 
+
 def lambda_function(event, context):
     # download file locally to /tmp retrieve metadata
     try:
@@ -42,7 +43,8 @@ def lambda_function(event, context):
         # get timestamps
     try:
         timestamps = event['timestamps']
-        apply_faces_to_video(timestamps, local_filename, local_filename_output, response["VideoMetadata"])
+        apply_faces_to_video(timestamps, local_filename,
+                             local_filename_output, response["VideoMetadata"])
     except Exception as e:
         print(e)
         # continue
@@ -60,8 +62,18 @@ def lambda_function(event, context):
         # add_failed(bucket, error_message, failed_records, key)
         # continue
 
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('channel')
+    resp = table.update_item(
+        Key={'channel_name':  key.split('blur/blured_')[-1].split('_')[0]},
+        UpdateExpression="SET video_url= :s",
+        ExpressionAttributeValues={
+            ':s': 'https://d3328b7fefvh0o.cloudfront.net/' + key},
+        ReturnValues="UPDATED_NEW"
+    )
+    print(resp['Attributes'])
+
     return {
         'statusCode': 200,
         'body': json.dumps('Faces in video blurred')
     }
-
