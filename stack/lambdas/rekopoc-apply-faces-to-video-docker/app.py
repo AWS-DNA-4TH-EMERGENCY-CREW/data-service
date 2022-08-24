@@ -66,9 +66,10 @@ def lambda_function(event, context):
     table = dynamodb.Table('channel')
     resp = table.update_item(
         Key={'channel_name':  key.split('blur/blured_')[-1].split('_')[0]},
-        UpdateExpression="SET video_url= :s",
+        UpdateExpression="SET playback_url= :s, channel_type= :ss",
         ExpressionAttributeValues={
-            ':s': 'https://d3328b7fefvh0o.cloudfront.net/' + key},
+            ':s': 'https://d3328b7fefvh0o.cloudfront.net/' + key,
+            ':ss': 'VIDEO'},
         ReturnValues="UPDATED_NEW"
     )
     print(resp['Attributes'])
