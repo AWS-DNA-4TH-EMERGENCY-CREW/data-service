@@ -2,17 +2,16 @@
 
 ## About
 
-This code sample demonstrates how AWS Step Functions can be used to orchestrate AWS Lambda functions that call Amazon Rekognition for face detections, and use OpenCV to blur these detections per frame in the video. Customers can use Amazon Rekognition to enforce privacy/anonymity in videos.
-
+재난 Live 영상에서 시민의 익명성 보장을 위한 blur 처리 서비스
 Original video frame             |  Blurred video image
 :-------------------------:|:-------------------------:
 ![input](images/input.gif)  |  ![output](images/output.gif)
 
 ### Architecture
 
-This code sample demonstrates how AWS Step Functions can be used to orchestrate AWS Lambda functions that call Amazon Rekognition for face detections, and use OpenCV to blur these detections per frame in the video.
 
-![rekognition-video-face-blur-cdk-app Architecture](images/rekognition-video-face-blur-cdk-app.png)
+![image](https://user-images.githubusercontent.com/93514697/186082955-a35e7d7b-9a86-4545-9329-60a75f62d3a6.png)
+
 
 ### Container image support in AWS Lambda
 Providing your serverless functions access to OpenCV is easier than ever with [Container Image Support](https://aws.amazon.com/blogs/aws/new-for-aws-lambda-container-image-support/). Instead of uploading a code package to AWS Lambda, your function's code instead resides in a Docker image that is hosted in [Amazon Elastic Container Registry](https://aws.amazon.com/ecr/).
