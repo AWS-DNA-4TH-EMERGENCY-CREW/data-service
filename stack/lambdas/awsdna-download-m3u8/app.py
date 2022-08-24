@@ -31,6 +31,13 @@ def lambda_function(event, context):
     fl = [x['Key'] for x in cl if (
         lambda x:channel_id in x['Key'] and '360p30' in x['Key'] and x['Key'].endswith('.ts'))(x)]
 
+    while 'NextContinuationToken' in obj_list:
+        obj_list = s3.list_objects_v2(
+            Bucket='ivs-video-archive-us-east-1', ContinuationToken=obj_list['NextContinuationToken'])
+        cl = obj_list['Contents']
+        fl.extend([x['Key'] for x in cl if (
+            lambda x:channel_id in x['Key'] and '360p30' in x['Key'] and x['Key'].endswith('.ts'))(x)])
+
     logger.log(logging.ERROR, ', '.join(fl))
 
     for f in fl:
@@ -42,6 +49,9 @@ def lambda_function(event, context):
     filePath = "/tmp"
     file_list = sorted(
         [file for file in os.listdir(filePath) if file.endswith(".ts")])
+
+    logger.log(logging.ERROR, 'filelist:'+'\n'.join(file_list))
+
     with open("/tmp/file_list.txt", "w+") as f:
         for file in file_list:
             f.write("file '{}'\n".format(file))
