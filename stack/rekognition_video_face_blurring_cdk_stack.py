@@ -20,6 +20,23 @@ class RekognitionVideoFaceBlurringCdkStack(cdk.Stack):
         inputImageBucket = s3.Bucket(self, "InputImageBucket")
         outputImageBucket = s3.Bucket(self, "OutputImageBucket")
 
+        downloadCCTVFunction = lambda_.DockerImageFunction(self, "DownloadCCTVDockerFunction", timeout=cdk.Duration.seconds(600), memory_size=2048,
+                                                           code=lambda_.DockerImageCode.from_image_asset("./stack/lambdas/awsdna-download-cctv"))
+
+        # Adding the S3 output bucket name as an ENV variable to the blurFacesFunction
+        downloadCCTVFunction.add_environment(
+            key="OUTPUT_BUCKET", value=outputImageBucket.bucket_name)
+
+        downloadCCTVFunction.add_to_role_policy(_iam.PolicyStatement(
+            effect=_iam.Effect.ALLOW,
+            actions=["s3:*"],
+            resources=['*']))
+
+        downloadCCTVFunction.add_to_role_policy(_iam.PolicyStatement(
+            effect=_iam.Effect.ALLOW,
+            actions=["dynamodb:*"],
+            resources=['*']))
+
         ###############################################################################################
         #Lambda#
         ###############################################################################################
